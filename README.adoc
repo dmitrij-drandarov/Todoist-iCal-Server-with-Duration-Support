@@ -16,5 +16,5 @@ npm start
 == Usage
 - Put your API token inside the `.token` file inside the root directory.
 - Tasks with "5h - " (matching `/\dh\s-\s/`) at the start of the task name will have a duration in your calendar
-- iCal-URL: `http://localhost:3000/ical`
+- iCal-URL: `http://localhost:8099/ical`
 - Replace `localhost` with whereever you choose to host this

@@ -13,5 +13,5 @@ RUN npm install
 COPY . .
 
 # this is part of the docker-compose
-#EXPOSE 3000
+#EXPOSE 8099
 #CMD [ "npm", "start" ]

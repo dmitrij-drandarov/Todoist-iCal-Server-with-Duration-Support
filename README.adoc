@@ -1,0 +1,20 @@
+= Todoist iCal Server w/ Duration Support written in NodeJS
+
+
+== Startup
+Either use *Docker*:
+```
+docker-compose up
+```
+
+Or use *npm*:
+```
+npm install
+npm start
+```
+
+== Usage
+- Put your API token inside the `.token` file inside the root directory.
+- Tasks with "5h - " (matching `/\dh\s-\s/`) at the start of the task name will have a duration in your calendar
+- iCal-URL: `http://localhost:3000/ical`
+- Replace `localhost` with whereever you choose to host this

@@ -7,23 +7,20 @@ let cal;
 
 /* GET users listing. */
 router.get('/', async function (req, res) {
-    cal = ical({domain: 'dmitrij-drandarov.com', name: 'Custom Todoist iCal'}).valueOf();
-
     await pullTasks();
+
     res.type('text/calendar');
     cal.serve(res);
 });
 
 async function pullTasks() {
+    cal = ical({domain: 'dmitrij-drandarov.com', name: 'Custom Todoist iCal'}).valueOf();
     let token = fs.readFileSync('./.token', 'utf8');
     console.log(token);
 
     const options = {
         method: 'GET',
-        uri: 'https://beta.todoist.com/API/v8/tasks',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
+        uri: `https://beta.todoist.com/API/v8/tasks?token=${token}`
     };
 
     await request(options)
@@ -78,5 +75,7 @@ function addEvent(task) {
         })
     }
 }
+
+setInterval(pullTasks, 600000);
 
 module.exports = router;

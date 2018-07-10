@@ -7,21 +7,30 @@ let cal;
 
 /* GET users listing. */
 router.get('/', async function (req, res) {
-    await pullTasks();
+    let token = fs.readFileSync('./.token', 'utf8');
+    if (token === "") {
+        token = req.url.split("?")[1];
+        if (token === undefined) {
+            res.render('error', {message: 'No token key set...'});
+        }
+    }
+    console.log(token);
+
+    await pullTasks(token);
 
     res.type('text/calendar');
     cal.serve(res);
 });
 
-async function pullTasks() {
+async function pullTasks(token) {
     cal = ical({domain: 'dmitrij-drandarov.com', name: 'Custom Todoist iCal'}).valueOf();
-    let token = fs.readFileSync('./.token', 'utf8');
-    console.log(token);
 
+    let uri = `https://beta.todoist.com/API/v8/tasks?token=${token}`;
     const options = {
         method: 'GET',
-        uri: `https://beta.todoist.com/API/v8/tasks?token=${token}`
+        uri: uri
     };
+    console.log(uri);
 
     await request(options)
         .then(response => {
@@ -31,14 +40,12 @@ async function pullTasks() {
 }
 
 function processTasks(jsonTasks) {
-
     JSON.parse(jsonTasks).forEach(task => {
         if (task.due && task.due.date) {
+            console.log(task.content);
             addEvent(task);
         }
     });
-
-    console.log(cal.toString());
 }
 
 function addEvent(task) {
@@ -76,6 +83,6 @@ function addEvent(task) {
     }
 }
 
-setInterval(pullTasks, 600000);
+// setInterval(pullTasks, 600000);
 
 module.exports = router;

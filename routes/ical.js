@@ -61,7 +61,7 @@ function addEvent(task) {
 
         // Date + Time + Duration
         if (/\dh\s-\s/.test(task.content)) {
-            end = new Date(start.getTime() + (parseInt(task.content.split('h - ')[0]) * 3600000));
+            end = new Date(start.getTime() + (parseFloat(task.content.split('h - ')[0].replace(',', '.')) * 3600000));
         }
     }
 

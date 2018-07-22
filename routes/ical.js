@@ -16,14 +16,20 @@ router.get('/', async function (req, res) {
     }
     console.log(token);
 
+
     await pullTasks(token);
+
 
     res.type('text/calendar');
     cal.serve(res);
 });
 
 async function pullTasks(token) {
-    cal = ical({domain: 'dmitrij-drandarov.com', name: 'Custom Todoist iCal'}).valueOf();
+    cal = ical({
+        domain: 'dmitrij-drandarov.com',
+        name: 'custom-todoist-ical',
+        prodId: {company: 'dmitrij-drandarov.com', product: 'custom-todoist-ical'}});
+
 
     let uri = `https://beta.todoist.com/API/v8/tasks?token=${token}`;
     const options = {
@@ -31,6 +37,7 @@ async function pullTasks(token) {
         uri: uri
     };
     console.log(uri);
+
 
     await request(options)
         .then(response => {
@@ -53,11 +60,13 @@ function addEvent(task) {
     let end = new Date(start.getTime() + 3600000);
     let allDay = true;
 
+
     // Date + Time
     if (task.due.datetime) {
         allDay = false;
         start = new Date(task.due.datetime);
         end = new Date(start.getTime() + 3600000);
+
 
         // Date + Time + Duration
         if (/\dh\s-\s/.test(task.content)) {
@@ -67,14 +76,15 @@ function addEvent(task) {
 
     if (allDay) {
         cal.createEvent({
+            uid: task.id,
             start: start,
             allDay: allDay,
             summary: task.content,
             description: `Description: ${task.content}`
         });
-    }
-    else {
+    } else {
         cal.createEvent({
+            uid: task.id,
             start: start,
             end: end,
             summary: task.content,
@@ -82,7 +92,5 @@ function addEvent(task) {
         })
     }
 }
-
-// setInterval(pullTasks, 600000);
 
 module.exports = router;
